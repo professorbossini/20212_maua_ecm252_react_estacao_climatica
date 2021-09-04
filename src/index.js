@@ -3,20 +3,43 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
+import EstacaoClimatica from './EstacaoClimatica'
+import Loading from './Loading'
 
 class App extends React.Component{
 
     constructor(props){
         super(props)
-        this.state = {
-            lat: null,
-            lng: null,
-            estacao: null,
-            data: null,
-            icone: null,
-            mensagemErro: null
-        }
+        // this.state = {
+        //     lat: null,
+        //     lng: null,
+        //     estacao: null,
+        //     data: null,
+        //     icone: null,
+        //     mensagemErro: null
+        // }
+        console.log ('construtor')
+    }
+    state = {
+        lat: null,
+        lng: null,
+        estacao: null,
+        data: null,
+        icone: null,
+        mensagemErro: null
+    }
 
+    componentDidMount(){
+        this.obterLocalizacao()
+        // console.log ('componentDidMount')
+    }
+
+    componentDidUpdate(){
+        console.log('componentDidUpdate')
+    }
+
+    componentWillUnmount(){
+        console.log('componentWillUnmount')
     }
 
     obterEstacao = (data, latitude) => {
@@ -71,6 +94,7 @@ class App extends React.Component{
     }
 
     render(){
+        console.log('render')
         //this.obterLocalizacao()
         // let texto = 'Clique no botão para saber a sua estação climática'
         // if (this.state.lat)
@@ -79,30 +103,24 @@ class App extends React.Component{
             <div className="container mt-2">
                <div className="row justify-content-center">
                     <div className="col-md-8">
-                        <div className="card">
-                            <div className='card-body'>
-                                <div className="d-flex align-items-center border mb-2">
-                                    <i className={`fas fa-5x ${this.state.icone}`}></i>
-                                    <p className="w-75 ms-3 text-center fs-1">{this.state.estacao}</p>
-                                </div>
-                                <div>
-                                    <p className="text-center">
-                                       {
-                                        this.state.lat ?
-                                        `Coordenadas: ${this.state.lat}, ${this.state.lng}. Data: ${this.state.data}`
-                                       :
-                                        this.state.mensagemErro?
-                                        `${this.state.mensagemErro}`
-                                        :
-                                        `Clique no botão para saber a sua estação climática`
-                                       }
-                                    </p>
-                                </div>
-                                <button onClick={() => this.obterLocalizacao()} className="btn btn-outline-primary w-100 mt-2">
-                                    Qual a minha estação?
-                                </button>
-                            </div>
-                        </div>
+                    {
+                        (!this.state.lat && !this.state.mensagemErro) ?
+                        <Loading mensagem="Por favor, responda à solicitação de localização"/>
+                        :
+                        this.state.mensagemErro ?
+                        <p className="border rounded p-2 fs-1 text-center">
+                            É preciso dar permissão de acesso à localização. Atualize a página e tente de novo, ajustando a configuração no seu navegador.
+                        </p>
+                        :
+                        <EstacaoClimatica 
+                            icone={this.state.icone}
+                            estacao={this.state.estacao}
+                            lat={this.state.lat}
+                            lng={this.state.lng}
+                            mensagemErro={this.state.mensagemErro}
+                            obterLocalizacao={this.obterLocalizacao}
+                        />
+                    }
                     </div>
                </div>
             </div>
